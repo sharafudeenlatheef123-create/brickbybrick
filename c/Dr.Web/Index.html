@@ -1,289 +1,390 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ml">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DR Mobile</title>
+
+<title>Doctor Mobile AI</title>
+
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial,sans-serif;
-}
 body{
-    background:#fff;
-    color:#111;
+    margin:0;
+    background:#101010;
+    color:white;
+    font-family:Arial,sans-serif;
+    text-align:center;
 }
-.container{
+
+.app{
     max-width:500px;
     margin:auto;
-    padding:25px 18px;
-}
-.header{
-    text-align:center;
-    padding:25px 0 35px;
-}
-.logo{
-    font-size:42px;
-    font-weight:800;
-    letter-spacing:-3px;
-}
-.shop-name{
-    font-size:16px;
-    color:#777;
-    margin-top:5px;
-}
-.subtitle{
-    margin-top:25px;
-    font-size:14px;
-    color:#888;
-}
-.options{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:15px;
-}
-.option{
-    background:#fff;
-    border:1px solid #e5e5e5;
-    border-radius:18px;
-    padding:30px 15px;
-    text-align:center;
-    cursor:pointer;
-    box-shadow:0 5px 20px rgba(0,0,0,.06);
-    transition:.2s;
-}
-.option:hover{
-    transform:translateY(-3px);
-    box-shadow:0 8px 25px rgba(0,0,0,.1);
-}
-.icon{
-    font-size:32px;
-    margin-bottom:12px;
-}
-.option h3{
-    font-size:17px;
-}
-.section{
-    display:none;
-    margin-top:25px;
-}
-.section.active{
-    display:block;
-}
-.back{
-    border:0;
-    background:none;
-    color:#777;
-    margin-bottom:18px;
-    cursor:pointer;
-    font-size:14px;
-}
-label{
-    display:block;
-    font-size:14px;
-    font-weight:600;
-    margin-bottom:8px;
-}
-input{
-    width:100%;
-    padding:15px;
-    border:1px solid #ddd;
-    border-radius:12px;
-    outline:none;
-    font-size:15px;
-    background:#fff;
-}
-input:focus{
-    border-color:#111;
-}
-.result{
-    margin-top:20px;
     padding:20px;
-    border:1px solid #e5e5e5;
-    border-radius:16px;
-    box-shadow:0 5px 18px rgba(0,0,0,.05);
-    display:none;
 }
-.result h3{
-    margin-bottom:15px;
+
+h1{
+    margin-top:10px;
 }
-.row{
+
+.status{
+    margin:15px 0;
+    color:#aaa;
+}
+
+.face{
+    width:170px;
+    height:170px;
+    margin:25px auto;
+    border-radius:50%;
+    background:#222;
+    border:3px solid #555;
     display:flex;
-    justify-content:space-between;
-    padding:10px 0;
-    border-bottom:1px solid #eee;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
 }
-.btn-group{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:12px;
-    margin-top:18px;
+
+.eyes{
+    font-size:40px;
 }
-.whatsapp,.call{
-    display:block;
-    text-align:center;
-    padding:14px;
+
+.mouth{
+    font-size:40px;
+    margin-top:10px;
+}
+
+button{
+    width:100%;
+    padding:18px;
+    margin-top:12px;
+    border:0;
+    border-radius:14px;
+    font-size:18px;
+    font-weight:bold;
+}
+
+.start{
+    background:#16a34a;
+    color:white;
+}
+
+.stop{
+    background:#dc2626;
+    color:white;
+}
+
+.box{
+    background:#1c1c1c;
+    padding:15px;
+    margin-top:15px;
     border-radius:12px;
-    font-weight:600;
-    text-decoration:none;
+    text-align:left;
 }
-.whatsapp{
-    background:#25D366;
-    color:#fff;
+
+.label{
+    color:#999;
+    font-size:14px;
 }
-.call{
-    background:#111;
-    color:#fff;
+
+.text{
+    margin-top:8px;
+    font-size:18px;
+    line-height:1.6;
 }
-.parts-message{
-    padding:20px;
-    border:1px solid #e5e5e5;
-    border-radius:16px;
-    text-align:center;
-    color:#666;
-}
-.contact-bar{
-    text-align:center;
-    margin-top:30px;
-    padding-top:20px;
-    border-top:1px solid #eee;
-}
-.contact-bar a{
-    color:#111;
-    font-weight:600;
-    text-decoration:none;
-    margin:0 10px;
+
+#error{
+    margin-top:15px;
+    color:#ff7777;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="app">
 
-    <div class="header">
-        <div class="logo">DR</div>
-        <div class="shop-name">DR Mobile</div>
-        <div class="subtitle">Select a service</div>
-    </div>
+<h1>Doctor Mobile AI</h1>
 
-    <div class="options" id="mainOptions">
-        <div class="option" onclick="showDisplay()">
-            <div class="icon">📱</div>
-            <h3>Display</h3>
-        </div>
-        <div class="option" onclick="showParts()">
-            <div class="icon">🔧</div>
-            <h3>Spare Parts</h3>
-        </div>
-    </div>
+<div class="status" id="status">
+തുടങ്ങാൻ button അമർത്തുക
+</div>
 
-    <!-- DISPLAY SECTION -->
-    <div class="section" id="displaySection">
-        <button class="back" onclick="goBack()">← Back</button>
+<div class="face">
+    <div class="eyes">👀</div>
+    <div class="mouth" id="mouth">🙂</div>
+</div>
 
-        <label>Select / Enter Phone Model</label>
-        <input list="models" id="model" placeholder="Example: Vivo Y20" oninput="checkModel()">
+<button class="start" onclick="startListening()">
+🎙️ Customer സംസാരിക്കുക
+</button>
 
-        <datalist id="models">
-            <option value="Vivo Y20">
-            <option value="Vivo Y31">
-            <option value="Oppo A31">
-            <option value="Oppo A15">
-            <option value="Oppo F19">
-            <option value="Realme C21Y">
-        </datalist>
+<button class="stop" onclick="stopListening()">
+⛔ Stop
+</button>
 
-        <div class="result" id="result">
-            <h3 id="modelName"></h3>
-            <div class="row">
-                <span>Display</span>
-                <strong id="displayType"></strong>
-            </div>
-            <div class="row">
-                <span>Stock</span>
-                <strong id="stock"></strong>
-            </div>
-            <div class="row">
-                <span>Rate</span>
-                <strong id="rate"></strong>
-            </div>
+<div class="box">
 
-            <div class="btn-group">
-                <a id="whatsapp" class="whatsapp" target="_blank" href="#">WhatsApp</a>
-                <a id="callbtn" class="call" href="tel:+917907930656">Call Now</a>
-            </div>
-        </div>
-    </div>
+<div class="label">Customer</div>
 
-    <!-- SPARE PARTS -->
-    <div class="section" id="partsSection">
-        <button class="back" onclick="goBack()">← Back</button>
-        <div class="parts-message">
-            <h3>Spare Parts</h3>
-            <p style="margin-top:10px;">
-                Please enter the phone model and contact us on WhatsApp or Call.
-            </p>
-            <div class="btn-group">
-                <a class="whatsapp" target="_blank" href="https://wa.me/917907930656?text=Hi%20DR%20Mobile%2C%20I%20need%20spare%20parts.">WhatsApp Enquiry</a>
-                <a class="call" href="tel:+917907930656">Call Now</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="contact-bar">
-        <a href="tel:+917907930656">📞 7907930656</a> |
-        <a href="https://wa.me/917907930656" target="_blank">💬 WhatsApp</a>
-    </div>
+<div class="text" id="customer">
+ഇവിടെ customer പറയുന്നത് വരും.
+</div>
 
 </div>
 
+<div class="box">
+
+<div class="label">Doctor Mobile AI</div>
+
+<div class="text" id="answer">
+Customer സംസാരിച്ച ശേഷം AI reply ഇവിടെ വരും.
+</div>
+
+</div>
+
+<div id="error"></div>
+
+</div>
+
+
 <script>
-const stockData = {
-    "vivo y20": { display: "Display Combo", stock: "Available", rate: "₹800" },
-    "vivo y31": { display: "Display Combo", stock: "Available", rate: "₹850" },
-    "oppo a31": { display: "Display Combo", stock: "Available", rate: "₹800" },
-    "oppo a15": { display: "Display Combo", stock: "Available", rate: "₹800" },
-    "oppo f19": { display: "Display Combo", stock: "Available", rate: "₹850" },
-    "realme c21y": { display: "Display Combo", stock: "Available", rate: "₹800" }
+/* ==========================
+   DOCTOR MOBILE AI - FREE DEMO
+   Voice input + demo AI replies + voice output
+   No API key required
+========================== */
+
+const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+let recognition = null;
+let speaking = false;
+
+/* START LISTENING */
+function startListening(){
+
+    clearError();
+
+    if(!SpeechRecognition){
+        showError("ഈ Chrome/browser voice input support ചെയ്യുന്നില്ല.");
+        return;
+    }
+
+    window.speechSynthesis.cancel();
+
+    recognition = new SpeechRecognition();
+
+    // Malayalam voice recognition
+    recognition.lang = "ml-IN";
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onstart = function(){
+        document.getElementById("status").innerText =
+            "🎙️ ഇപ്പോൾ സംസാരിക്കാം...";
+        document.getElementById("mouth").innerText = "👂";
+    };
+
+    recognition.onresult = function(event){
+
+        const text = event.results[0][0].transcript;
+
+        document.getElementById("customer").innerText = text;
+        document.getElementById("status").innerText =
+            "🤖 AI മറുപടി തയ്യാറാക്കുന്നു...";
+        document.getElementById("mouth").innerText = "🤔";
+
+        answerCustomer(text);
+    };
+
+    recognition.onerror = function(event){
+
+        console.log(event.error);
+
+        if(event.error === "not-allowed"){
+            showError("Microphone permission അനുവദിച്ചിട്ടില്ല.");
+        }
+        else if(event.error === "no-speech"){
+            showError("ശബ്ദം കേൾക്കാനായില്ല. വീണ്ടും button അമർത്തി സംസാരിക്കുക.");
+        }
+        else if(event.error === "network"){
+            showError("Internet connection പരിശോധിക്കുക.");
+        }
+        else{
+            showError("Voice input-ൽ ഒരു പ്രശ്നം ഉണ്ടായി.");
+        }
+
+        document.getElementById("mouth").innerText = "😕";
+    };
+
+    recognition.onend = function(){
+        if(!speaking){
+            document.getElementById("mouth").innerText = "🙂";
+        }
+    };
+
+    recognition.start();
+}
+
+/* STOP */
+function stopListening(){
+
+    if(recognition){
+        recognition.stop();
+    }
+
+    window.speechSynthesis.cancel();
+    speaking = false;
+
+    document.getElementById("status").innerText = "⛔ നിർത്തി";
+    document.getElementById("mouth").innerText = "🙂";
+}
+
+/* ==========================
+   FREE DEMO AI
+   ========================== */
+
+function answerCustomer(text){
+
+    const t = text.toLowerCase().trim();
+    let answer = "";
+
+    // Common Malayalam / English customer questions
+    if(
+        t.includes("hello") ||
+        t.includes("hi") ||
+        t.includes("ഹലോ") ||
+        t.includes("ഹായ്")
+    ){
+        answer = "ഹലോ! Doctor Mobile AI-ലേക്ക് സ്വാഗതം. എന്താണ് വേണ്ടത്?";
+    }
+    else if(
+        t.includes("price") ||
+        t.includes("rate") ||
+        t.includes("വില") ||
+        t.includes("എത്ര")
+    ){
+        answer = "ഏത് product അല്ലെങ്കിൽ service-ന്റെ വിലയാണ് അറിയേണ്ടത്? Product name അല്ലെങ്കിൽ code പറയൂ.";
+    }
+    else if(
+        t.includes("mobile") ||
+        t.includes("phone") ||
+        t.includes("മൊബൈൽ") ||
+        t.includes("ഫോൺ")
+    ){
+        answer = "തീർച്ചയായും. Mobile repair, display, battery, charging, software തുടങ്ങിയ services സംബന്ധിച്ച് ഞാൻ സഹായിക്കാം.";
+    }
+    else if(
+        t.includes("display") ||
+        t.includes("ഡിസ്പ്ലേ")
+    ){
+        answer = "Display സംബന്ധിച്ച് സഹായിക്കാം. നിങ്ങളുടെ mobile model പറയൂ. അതനുസരിച്ച് വിവരങ്ങൾ നൽകാം.";
+    }
+    else if(
+        t.includes("battery") ||
+        t.includes("ബാറ്ററി")
+    ){
+        answer = "Battery replacement സംബന്ധിച്ച് സഹായിക്കാം. നിങ്ങളുടെ phone model പറയൂ.";
+    }
+    else if(
+        t.includes("thank") ||
+        t.includes("നന്ദി")
+    ){
+        answer = "സ്വാഗതം! വേണമെങ്കിൽ മറ്റെന്തെങ്കിലും ചോദിക്കാം.";
+    }
+    else{
+        answer =
+            "നിങ്ങളുടെ ചോദ്യം ഞാൻ കേട്ടു. ഇത് ഇപ്പോൾ Free Demo AI ആണ്. കൂടുതൽ കൃത്യമായ ChatGPT-style മറുപടിക്ക് പിന്നീട് AI API connect ചെയ്യാം.";
+    }
+
+    document.getElementById("answer").innerText = answer;
+    document.getElementById("status").innerText = "🔊 AI സംസാരിക്കുന്നു...";
+
+    speakAnswer(answer);
+}
+
+/* ==========================
+   VOICE OUTPUT
+========================== */
+
+function speakAnswer(text){
+
+    if(!("speechSynthesis" in window)){
+        document.getElementById("status").innerText =
+            "AI reply തയ്യാറായി";
+        return;
+    }
+
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+
+    // Malayalam voice if available
+    const voices = window.speechSynthesis.getVoices();
+
+    const mlVoice = voices.find(v =>
+        v.lang && v.lang.toLowerCase().startsWith("ml")
+    );
+
+    const enVoice = voices.find(v =>
+        v.lang && v.lang.toLowerCase().startsWith("en-in")
+    );
+
+    if(mlVoice){
+        utterance.voice = mlVoice;
+        utterance.lang = "ml-IN";
+    }
+    else if(enVoice){
+        utterance.voice = enVoice;
+        utterance.lang = "en-IN";
+    }
+    else{
+        utterance.lang = "ml-IN";
+    }
+
+    utterance.rate = 0.95;
+    utterance.pitch = 1.0;
+
+    utterance.onstart = function(){
+        speaking = true;
+        document.getElementById("mouth").innerText = "🗣️";
+    };
+
+    utterance.onend = function(){
+        speaking = false;
+        document.getElementById("mouth").innerText = "🙂";
+        document.getElementById("status").innerText =
+            "✅ AI reply പൂർത്തിയായി";
+    };
+
+    utterance.onerror = function(){
+        speaking = false;
+        document.getElementById("mouth").innerText = "🙂";
+        document.getElementById("status").innerText =
+            "AI reply തയ്യാറായി";
+    };
+
+    window.speechSynthesis.speak(utterance);
+}
+
+/* Chrome sometimes loads voices asynchronously */
+window.speechSynthesis.onvoiceschanged = function(){
+    window.speechSynthesis.getVoices();
 };
 
-function showDisplay(){
-    document.getElementById("mainOptions").style.display="none";
-    document.getElementById("displaySection").classList.add("active");
-}
-function showParts(){
-    document.getElementById("mainOptions").style.display="none";
-    document.getElementById("partsSection").classList.add("active");
-}
-function goBack(){
-    document.getElementById("mainOptions").style.display="grid";
-    document.getElementById("displaySection").classList.remove("active");
-    document.getElementById("partsSection").classList.remove("active");
-}
-function checkModel(){
-    let inputRaw = document.getElementById("model").value.trim();
-    let input = inputRaw.toLowerCase();
-    let result = document.getElementById("result");
+/* ==========================
+   HELPERS
+========================== */
 
-    if(stockData[input]){
-        let data = stockData[input];
-        document.getElementById("modelName").innerText = inputRaw.toUpperCase();
-        document.getElementById("displayType").innerText = data.display;
-        document.getElementById("stock").innerText = data.stock;
-        document.getElementById("rate").innerText = data.rate;
+function showError(message){
+    document.getElementById("error").innerText = message;
+    document.getElementById("status").innerText = "⚠️ ശ്രദ്ധിക്കുക";
+}
 
-        let message = `Hi DR Mobile,\n\nI need display for: ${inputRaw.toUpperCase()}\nDisplay: ${data.display}\nRate: ${data.rate}\nStock: ${data.stock}`;
-
-        document.getElementById("whatsapp").href = "https://wa.me/917907930656?text=" + encodeURIComponent(message);
-        result.style.display="block";
-    } else {
-        result.style.display="none";
-    }
+function clearError(){
+    document.getElementById("error").innerText = "";
 }
 </script>
-
 </body>
 </html>
