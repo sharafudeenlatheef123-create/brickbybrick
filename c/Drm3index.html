@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Doctor Mobile AI</title>
+
+<style>
+body{
+    margin:0;
+    background:#101010;
+    color:white;
+    font-family:Arial,sans-serif;
+    text-align:center;
+}
+
+.app{
+    max-width:500px;
+    margin:auto;
+    padding:20px;
+}
+
+h1{
+    margin-top:10px;
+}
+
+.status{
+    margin:15px 0;
+    color:#aaa;
+}
+
+.face{
+    width:170px;
+    height:170px;
+    margin:25px auto;
+    border-radius:50%;
+    background:#222;
+    border:3px solid #555;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+}
+
+.eyes{
+    font-size:40px;
+}
+
+.mouth{
+    font-size:40px;
+    margin-top:10px;
+}
+
+button{
+    width:100%;
+    padding:18px;
+    margin-top:12px;
+    border:0;
+    border-radius:14px;
+    font-size:18px;
+    font-weight:bold;
+}
+
+.start{
+    background:#16a34a;
+    color:white;
+}
+
+.stop{
+    background:#dc2626;
+    color:white;
+}
+
+.box{
+    background:#1c1c1c;
+    padding:15px;
+    margin-top:15px;
+    border-radius:12px;
+    text-align:left;
+}
+
+.label{
+    color:#999;
+    font-size:14px;
+}
+
+.text{
+    margin-top:8px;
+    font-size:18px;
+    line-height:1.6;
+}
+
+#error{
+    margin-top:15px;
+    color:#ff7777;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<h1>Doctor Mobile AI</h1>
+
+<div class="status" id="status">
+തുടങ്ങാൻ button അമർത്തുക
+</div>
+
+<div class="face">
+    <div class="eyes">👀</div>
+    <div class="mouth" id="mouth">🙂</div>
+</div>
+
+<button class="start" onclick="startListening()">
+🎙️ Customer സംസാരിക്കുക
+</button>
+
+<button class="stop" onclick="stopListening()">
+⛔ Stop
+</button>
+
+<div class="box">
+
+<div class="label">Customer</div>
+
+<div class="text" id="customer">
+ഇവിടെ customer പറയുന്നത് വരും.
+</div>
+
+</div>
+
+<div class="box">
+
+<div class="label">Doctor Mobile AI</div>
+
+<div class="text" id="answer">
+Customer സംസാരിച്ച ശേഷം AI reply ഇവിടെ വരും.
+</div>
+
+</div>
+
+<div id="error"></div>
+
+</div>
+
+
+<script>
+/* ==========================
+   DOCTOR MOBILE AI - FREE DEMO
+   Voice input + demo AI replies + voice output
+   No API key required
+========================== */
+
+const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+let recognition = null;
+let speaking = false;
+
+/* START LISTENING */
+function startListening(){
+
+    clearError();
+
+    if(!SpeechRecognition){
+        showError("ഈ Chrome/browser voice input support ചെയ്യുന്നില്ല.");
+        return;
+    }
+
+    window.speechSynthesis.cancel();
+
+    recognition = new SpeechRecognition();
+
+    // Malayalam voice recognition
+    recognition.lang = "ml-IN";
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onstart = function(){
+        document.getElementById("status").innerText =
+            "🎙️ ഇപ്പോൾ സംസാരിക്കാം...";
+        document.getElementById("mouth").innerText = "👂";
+    };
+
+    recognition.onresult = function(event){
+
+        const text = event.results[0][0].transcript;
+
+        document.getElementById("customer").innerText = text;
+        document.getElementById("status").innerText =
+            "🤖 AI മറുപടി തയ്യാറാക്കുന്നു...";
+        document.getElementById("mouth").innerText = "🤔";
+
+        answerCustomer(text);
+    };
+
+    recognition.onerror = function(event){
+
+        console.log(event.error);
+
+        if(event.error === "not-allowed"){
+            showError("Microphone permission അനുവദിച്ചിട്ടില്ല.");
+        }
+        else if(event.error === "no-speech"){
+            showError("ശബ്ദം കേൾക്കാനായില്ല. വീണ്ടും button അമർത്തി സംസാരിക്കുക.");
+        }
+        else if(event.error === "network"){
+            showError("Internet connection പരിശോധിക്കുക.");
+        }
+        else{
+            showError("Voice input-ൽ ഒരു പ്രശ്നം ഉണ്ടായി.");
+        }
+
+        document.getElementById("mouth").innerText = "😕";
+    };
+
+    recognition.onend = function(){
+        if(!speaking){
+            document.getElementById("mouth").innerText = "🙂";
+        }
+    };
+
+    recognition.start();
+}
+
+/* STOP */
+function stopListening(){
+
+    if(recognition){
+        recognition.stop();
+    }
+
+    window.speechSynthesis.cancel();
+    speaking = false;
+
+    document.getElementById("status").innerText = "⛔ നിർത്തി";
+    document.getElementById("mouth").innerText = "🙂";
+}
+
+/* ==========================
+   FREE DEMO AI
+   ========================== */
+
+function answerCustomer(text){
+
+    const t = text.toLowerCase().trim();
+    let answer = "";
+
+    // Common Malayalam / English customer questions
+    if(
+        t.includes("hello") ||
+        t.includes("hi") ||
+        t.includes("ഹലോ") ||
+        t.includes("ഹായ്")
+    ){
+        answer = "ഹലോ! Doctor Mobile AI-ലേക്ക് സ്വാഗതം. എന്താണ് വേണ്ടത്?";
+    }
+    else if(
+        t.includes("price") ||
+        t.includes("rate") ||
+        t.includes("വില") ||
+        t.includes("എത്ര")
+    ){
+        answer = "ഏത് product അല്ലെങ്കിൽ service-ന്റെ വിലയാണ് അറിയേണ്ടത്? Product name അല്ലെങ്കിൽ code പറയൂ.";
+    }
+    else if(
+        t.includes("mobile") ||
+        t.includes("phone") ||
+        t.includes("മൊബൈൽ") ||
+        t.includes("ഫോൺ")
+    ){
+        answer = "തീർച്ചയായും. Mobile repair, display, battery, charging, software തുടങ്ങിയ services സംബന്ധിച്ച് ഞാൻ സഹായിക്കാം.";
+    }
+    else if(
+        t.includes("display") ||
+        t.includes("ഡിസ്പ്ലേ")
+    ){
+        answer = "Display സംബന്ധിച്ച് സഹായിക്കാം. നിങ്ങളുടെ mobile model പറയൂ. അതനുസരിച്ച് വിവരങ്ങൾ നൽകാം.";
+    }
+    else if(
+        t.includes("battery") ||
+        t.includes("ബാറ്ററി")
+    ){
+        answer = "Battery replacement സംബന്ധിച്ച് സഹായിക്കാം. നിങ്ങളുടെ phone model പറയൂ.";
+    }
+    else if(
+        t.includes("thank") ||
+        t.includes("നന്ദി")
+    ){
+        answer = "സ്വാഗതം! വേണമെങ്കിൽ മറ്റെന്തെങ്കിലും ചോദിക്കാം.";
+    }
+    else{
+        answer =
+            "നിങ്ങളുടെ ചോദ്യം ഞാൻ കേട്ടു. ഇത് ഇപ്പോൾ Free Demo AI ആണ്. കൂടുതൽ കൃത്യമായ ChatGPT-style മറുപടിക്ക് പിന്നീട് AI API connect ചെയ്യാം.";
+    }
+
+    document.getElementById("answer").innerText = answer;
+    document.getElementById("status").innerText = "🔊 AI സംസാരിക്കുന്നു...";
+
+    speakAnswer(answer);
+}
+
+/* ==========================
+   VOICE OUTPUT
+========================== */
+
+function speakAnswer(text){
+
+    if(!("speechSynthesis" in window)){
+        document.getElementById("status").innerText =
+            "AI reply തയ്യാറായി";
+        return;
+    }
+
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+
+    // Malayalam voice if available
+    const voices = window.speechSynthesis.getVoices();
+
+    const mlVoice = voices.find(v =>
+        v.lang && v.lang.toLowerCase().startsWith("ml")
+    );
+
+    const enVoice = voices.find(v =>
+        v.lang && v.lang.toLowerCase().startsWith("en-in")
+    );
+
+    if(mlVoice){
+        utterance.voice = mlVoice;
+        utterance.lang = "ml-IN";
+    }
+    else if(enVoice){
+        utterance.voice = enVoice;
+        utterance.lang = "en-IN";
+    }
+    else{
+        utterance.lang = "ml-IN";
+    }
+
+    utterance.rate = 0.95;
+    utterance.pitch = 1.0;
+
+    utterance.onstart = function(){
+        speaking = true;
+        document.getElementById("mouth").innerText = "🗣️";
+    };
+
+    utterance.onend = function(){
+        speaking = false;
+        document.getElementById("mouth").innerText = "🙂";
+        document.getElementById("status").innerText =
+            "✅ AI reply പൂർത്തിയായി";
+    };
+
+    utterance.onerror = function(){
+        speaking = false;
+        document.getElementById("mouth").innerText = "🙂";
+        document.getElementById("status").innerText =
+            "AI reply തയ്യാറായി";
+    };
+
+    window.speechSynthesis.speak(utterance);
+}
+
+/* Chrome sometimes loads voices asynchronously */
+window.speechSynthesis.onvoiceschanged = function(){
+    window.speechSynthesis.getVoices();
+};
+
+/* ==========================
+   HELPERS
+========================== */
+
+function showError(message){
+    document.getElementById("error").innerText = message;
+    document.getElementById("status").innerText = "⚠️ ശ്രദ്ധിക്കുക";
+}
+
+function clearError(){
+    document.getElementById("error").innerText = "";
+}
+</script>
+</body>
+</html>
